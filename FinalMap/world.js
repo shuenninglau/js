@@ -20,7 +20,7 @@ class world extends Phaser.Scene {
 
     this.load.image("kenny","assets/kenny.png");
     this.load.image("parcel","assets/parcel.png");
-    this.load.image("village","assets/village32x32.png");
+    this.load.image("village","assets/Village32x32.png");
 
     this.load.image("parcel1","assets/parcel-01.png");
     this.load.image("parcel2","assets/parcel-02.png");
