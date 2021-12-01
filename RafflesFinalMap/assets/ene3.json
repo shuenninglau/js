@@ -1,0 +1,65 @@
+{
+  "frames": [
+    {
+      "filename": "ene3-01",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 126,
+        "h": 126
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 4,
+        "w": 126,
+        "h": 126
+      },
+      "sourceSize": {
+        "w": 134,
+        "h": 134
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "ene3-02",
+      "frame": {
+        "x": 0,
+        "y": 126,
+        "w": 126,
+        "h": 126
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 4,
+        "w": 126,
+        "h": 126
+      },
+      "sourceSize": {
+        "w": 134,
+        "h": 134
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ],
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "ene3.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 126,
+      "h": 252
+    },
+    "scale": 1
+  }
+}
