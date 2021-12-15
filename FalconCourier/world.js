@@ -180,8 +180,8 @@ class world extends Phaser.Scene {
     this.itemLayer.setTileIndexCallback(575, this.removeItem, this);
 
     // layer collisons
-    // this.physics.add.collider(this.player, this.decorLayer); 
-    // this.physics.add.collider(this.player, this.buildingLayer);
+    this.physics.add.collider(this.player, this.decorLayer); 
+    this.physics.add.collider(this.player, this.buildingLayer);
     this.physics.add.collider(this.player, this.itemLayer);
     this.physics.add.collider(this.player, this.itemLayer);
 
