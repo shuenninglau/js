@@ -23,16 +23,6 @@ class blockD extends Phaser.Scene {
     this.load.image("parcel","assets/parcel.png");
     this.load.image("injection","assets/injection.png");
 
-    this.load.spritesheet('sas','assets/sas.png', {frameWidth:20, frameHeight:31})
-    this.load.spritesheet('npcg','assets/npcg.png', {frameWidth:20, frameHeight:32})
-    this.load.spritesheet('npcg','assets/npcg.png', {frameWidth:20, frameHeight:32})
-
-
-    this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");  
-
-    this.load.image("mask","assets/mask.png");
-    this.load.image("board","assets/board.png");
-
     }
 
     create() {

@@ -21,11 +21,6 @@ class blockB extends Phaser.Scene {
     this.load.image("modern","assets/mordern32x32.png");
     this.load.image("parcel","assets/parcel.png");
 
-    this.load.image("mask","assets/mask.png");
-    this.load.image("board","assets/board.png");
-
-    this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json"); 
-    this.load.spritesheet('guard','assets/guard.png', {frameWidth:23, frameHeight:32});
     }
 
     create() {
@@ -48,21 +43,6 @@ class blockB extends Phaser.Scene {
         this.carpetLayer = map.createLayer("carpetLayer",tilesArray, 0, 0);
         this.itemLayer = map.createLayer("itemLayer",tilesArray, 0, 0);
         this.frameLayer = map.createLayer("frameLayer",tilesArray, 0, 0);
-
-    /// ene2 animation////////////////////////////
-    this.anims.create({
-      key: 'ene2',
-      frames: [
-        { key: 'ene2', frame: 'ene2-01'},
-        { key: 'ene2', frame: 'ene2-02'},
-        { key: 'ene2', frame: 'ene2-03'},
-        { key: 'ene2', frame: 'ene2-04'},
-
-      ],
-      frameRate: 3,
-      repeat: -1
-    }) 
-    /// end of ene2 animation////////////////////////////
 
     this.physics.world.bounds.width = this.bgLayer.width; 
     this.physics.world.bounds.height = this.bgLayer.height;
@@ -173,7 +153,7 @@ class blockB extends Phaser.Scene {
       world(player, tile) {
         console.log("world function");
         let playerPos = {};
-        playerPos.x = 639;
+        playerPos.x = 715.6;
         playerPos.y = 586.6;
         playerPos.dir = "down";
     

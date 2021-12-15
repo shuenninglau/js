@@ -23,14 +23,6 @@ class room1 extends Phaser.Scene {
 
     this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");  
     this.load.image("parcel1","assets/parcel-01.png");
-
-    this.load.spritesheet('library','assets/library.png', {frameWidth:23, frameHeight:32});
-    this.load.spritesheet('lecturer','assets/lecturer.png', {frameWidth:20, frameHeight:31});
-    this.load.spritesheet('guard','assets/guard.png', {frameWidth:23, frameHeight:32});
-
-
-    this.load.image("mask","assets/mask.png");
-    this.load.image("board","assets/board.png");
    
     }
 
@@ -109,8 +101,8 @@ class room1 extends Phaser.Scene {
     }
 
     update() {
-      this.physics.moveToObject(this.lecturer, this.player, 30, 30000)
-      this.physics.moveToObject(this.guard, this.player, 30, 80000)
+      this.physics.moveToObject(this.lecturer, this.player, 30, 80000)
+      this.physics.moveToObject(this.guard, this.player, 30, 30000)
       ///////// Beginning of Enter room ////////////////////////////////
         // check for BlockA 
         if (this.player.x > 589 && this.player.x < 696 && this.player.y > 1164) {
@@ -196,8 +188,8 @@ class room1 extends Phaser.Scene {
       world(player, tile) {
         console.log("world function");
         let playerPos = {};
-        playerPos.x = 519;
-        playerPos.y = 1075.35;
+        playerPos.x = 475;
+        playerPos.y = 1092;
         playerPos.dir = "down";
 
         this.scene.start("world", { playerPos: playerPos });

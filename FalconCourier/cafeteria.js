@@ -21,9 +21,6 @@ class cafeteria extends Phaser.Scene {
     this.load.image("interior","assets/interior32x32.png")
     this.load.image("modern","assets/mordern32x32.png");
     this.load.image("parcel","assets/parcel.png");
-    this.load.spritesheet('boynpc','assets/boynpc.png', {frameWidth:20, frameHeight:31});
-
-    this.load.atlas("ene3", "assets/ene3.png", "assets/ene3.json");  
 
     this.load.image("mask","assets/mask.png");
     this.load.image("board","assets/board.png");
@@ -52,19 +49,6 @@ class cafeteria extends Phaser.Scene {
         this.tableLayer = map.createLayer("tableLayer",tilesArray, 0, 0);
         this.decorLayer = map.createLayer("decorLayer",tilesArray, 0, 0);       
         this.itemLayer = map.createLayer("itemLayer",tilesArray, 0, 0);
-       
-    /// ene2 animation////////////////////////////
-    this.anims.create({
-      key: 'ene3',
-      frames: [
-        { key: 'ene3', frame: 'ene3-01'},
-        { key: 'ene3', frame: 'ene3-02'},
-
-      ],
-      frameRate: 3,
-      repeat: -1
-    }) 
-    /// end of ene2 animation////////////////////////////    
 
     this.physics.world.bounds.width = this.bgLayer.width; 
     this.physics.world.bounds.height = this.bgLayer.height;
@@ -137,14 +121,15 @@ class cafeteria extends Phaser.Scene {
         }
 
     //go back to worldmap, check for cafeteria exit
-    if ( this.player.x > 1234 && this.player.y > 147.35 && this.player.y < 300.65 ) {
+    if ( this.player.x > 1234 && this.player.y > 147.35 && this.player.y < 300.65  
+      && window.parcel1>=1 
+      && window.parcel2>=1 
+      && window.parcel3>=1 
+      && window.injection>=1) {
       this.gameComplete();
     }
 
-    // && window.parcel1>=1 
-    // && window.parcel2>=1 
-    // && window.parcel3>=1 
-    // && window.injection>=1
+
 
     if (this.cursors.left.isDown) {
         this.player.body.setVelocityX(-200);
@@ -235,7 +220,7 @@ class cafeteria extends Phaser.Scene {
     let playerPos = {};
     playerPos.x = 1770;
     playerPos.y = 407;
-    playerPos.dir = "Down";
+    playerPos.dir = "down";
 
     this.scene.start("gameComplete", { playerPos: playerPos });
   }

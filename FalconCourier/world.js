@@ -26,23 +26,6 @@ class world extends Phaser.Scene {
     this.load.image("parcel2","assets/parcel-02.png");
     this.load.image("parcel3","assets/parcel-03.png");
 
-    this.load.image("mask","assets/mask.png");
-    this.load.image("board","assets/board.png");
-
-    this.load.spritesheet('girlnpc','assets/girlnpc.png', {frameWidth:23, frameHeight:32})
-    this.load.spritesheet('guard','assets/guard.png', {frameWidth:23, frameHeight:32})
-    this.load.spritesheet('lecturer','assets/lecturer.png', {frameWidth:20, frameHeight:31})
-    this.load.spritesheet('cafeteria','assets/cafeteria.png', {frameWidth:20, frameHeight:32})
-    this.load.spritesheet('npcg','assets/npcg.png', {frameWidth:20, frameHeight:32})
-    this.load.spritesheet('sas','assets/sas.png', {frameWidth:20, frameHeight:31})
-
-    this.load.atlas( 'left', 'assets/ch-left.png', 'assets/ch-left.json'); 
-    this.load.atlas( 'right', 'assets/ch-right.png', 'assets/ch-right.json');
-    this.load.atlas( 'up', 'assets/ch-up.png', 'assets/ch-up.json');
-    this.load.atlas( 'down', 'assets/ch-down.png', 'assets/ch-down.json');
-  
-    this.load.atlas("ene1", "assets/ene1.png", "assets/ene1.json");  
-
   }
 
   create() {
@@ -68,58 +51,6 @@ class world extends Phaser.Scene {
     this.buildingLayer = map.createLayer("BuildingLayer", tilesArray, 0, 0);
     this.itemLayer = map.createLayer("itemLayer", tilesArray, 0, 0);  
 
-    ///////////// player animation //////////////////////////////////////////
-    this.anims.create({ 
-      key: 'left',
-      frames: [
-        { key: 'left', frame: 'left-01'}, 
-        { key: 'left', frame: 'left-02'},
-        { key: 'left', frame: 'left-03'},
-        { key: 'left', frame: 'left-04'},
-
-      ],
-      frameRate: 6, 
-      repeat: -1
-    })
-
-    this.anims.create({
-      key: 'right',
-      frames: [
-        { key: 'right', frame: 'right-01'},
-        { key: 'right', frame: 'right-02'},
-        { key: 'right', frame: 'right-03'},
-        { key: 'right', frame: 'right-04'},
-
-      ],
-      frameRate: 6,
-      repeat: -1
-    })
-
-    this.anims.create({
-      key: 'up',
-      frames: [
-        { key: 'up', frame: 'up-01'},
-        { key: 'up', frame: 'up-02'},
-        { key: 'up', frame: 'up-03'},
-        { key: 'up', frame: 'up-04'},
-      ],
-      frameRate: 6,
-      repeat: -1
-    })
-
-     this.anims.create({
-      key: 'down',
-      frames: [
-        { key: 'down', frame: 'down-01'},
-        { key: 'down', frame: 'down-02'},
-        { key: 'down', frame: 'down-03'},
-        { key: 'down', frame: 'down-04'},
-      ],
-      frameRate: 6,
-      repeat: -1
-    })
-  ///////////// end of player animation //////////////////////////////////////////
-
     this.physics.world.bounds.width = this.groundLayer.width; 
     this.physics.world.bounds.height = this.groundLayer.height;
 
@@ -130,20 +61,6 @@ class world extends Phaser.Scene {
     );
 
     this.player = this.physics.add.sprite( this.playerPos.x, this.playerPos.y, 'up').setScale(0.3);
-
-    /// ene1 animation////////////////////////////
-    this.anims.create({
-      key: 'ene1',
-      frames: [
-        { key: 'ene1', frame: 'ene1-01'},
-        { key: 'ene1', frame: 'ene1-02'},
-        { key: 'ene1', frame: 'ene1-03'},
-
-      ],
-      frameRate: 3,
-      repeat: -1
-    }) 
-    /// end of ene1 animation////////////////////////////
   
     //enable debug (track the player position)
     window.player = this.player.setScale(0.3);
@@ -160,13 +77,13 @@ class world extends Phaser.Scene {
         // between block c,d
         // behind block d
     this.ene1=this.physics.add.sprite( 230,798, 'ene1').play('ene1').setScale(0.3);// leftright
-    this.ene4=this.physics.add.sprite( 340,581, 'ene1').play('ene1').setScale(0.3);// updown
+    // this.ene4=this.physics.add.sprite( 340,581, 'ene1').play('ene1').setScale(0.3);// updown
     this.ene5=this.physics.add.sprite( 460,227, 'ene1').play('ene1').setScale(0.3);// updown
     this.ene6=this.physics.add.sprite( 840,351, 'ene1').play('ene1').setScale(0.3);// leftright  
-    this.ene7=this.physics.add.sprite( 1230,144, 'ene1').play('ene1').setScale(0.3);// updown               
+    // this.ene7=this.physics.add.sprite( 1230,144, 'ene1').play('ene1').setScale(0.3);// updown               
     this.ene8=this.physics.add.sprite( 1160,461, 'ene1').play('ene1').setScale(0.3);// updown     
     this.ene9=this.physics.add.sprite( 1670,591, 'ene1').play('ene1').setScale(0.3);// updown     
-    this.ene10=this.physics.add.sprite( 1590,141, 'ene1').play('ene1').setScale(0.3);//leftright
+    // this.ene10=this.physics.add.sprite( 1590,141, 'ene1').play('ene1').setScale(0.3);//leftright
 
     // create the arrow keys
      this.cursors = this.input.keyboard.createCursorKeys();
@@ -181,19 +98,19 @@ class world extends Phaser.Scene {
 
     // layer collisons
     this.physics.add.collider(this.player, this.decorLayer); 
-    this.physics.add.collider(this.player, this.buildingLayer);
+    // this.physics.add.collider(this.player, this.buildingLayer);
     this.physics.add.collider(this.player, this.itemLayer);
     this.physics.add.collider(this.player, this.itemLayer);
 
 
     this.physics.add.overlap(this.player,this.ene1,this.deductLife,null,this)
-    this.physics.add.overlap(this.player,this.ene4,this.deductLife,null,this)
+    // this.physics.add.overlap(this.player,this.ene4,this.deductLife,null,this)
     this.physics.add.overlap(this.player,this.ene5,this.deductLife,null,this)
     this.physics.add.overlap(this.player,this.ene6,this.deductLife,null,this)
-    this.physics.add.overlap(this.player,this.ene7,this.deductLife,null,this)
+    // this.physics.add.overlap(this.player,this.ene7,this.deductLife,null,this)
     this.physics.add.overlap(this.player,this.ene8,this.deductLife,null,this)
     this.physics.add.overlap(this.player,this.ene9,this.deductLife,null,this)
-    this.physics.add.overlap(this.player,this.ene10,this.deductLife,null,this)
+    // this.physics.add.overlap(this.player,this.ene10,this.deductLife,null,this)
 
     // receipient position
     this.guard = this.physics.add.sprite(571,829, 'guard');
@@ -217,18 +134,18 @@ class world extends Phaser.Scene {
   /////////////////// end of create //////////////////////////////
 
   update() {
-    this.physics.moveToObject(this.ene1, this.player, 30, 10000)
-    this.physics.moveToObject(this.ene4, this.player, 30, 40000)
+    this.physics.moveToObject(this.ene1, this.player, 30, 220000)
+    // this.physics.moveToObject(this.ene4, this.player, 30, 40000)
     this.physics.moveToObject(this.ene5, this.player, 30, 70000)
     this.physics.moveToObject(this.ene6, this.player, 30, 100000)
-    this.physics.moveToObject(this.ene7, this.player, 30, 130000)
+    // this.physics.moveToObject(this.ene7, this.player, 30, 130000)
     this.physics.moveToObject(this.ene8, this.player, 30, 16000)
     this.physics.moveToObject(this.ene9, this.player, 30, 19000)
-    this.physics.moveToObject(this.ene10, this.player, 30, 220000)
+    // this.physics.moveToObject(this.ene10, this.player, 30, 220000)
 
 ///////// Beginning of Enter room ////////////////////////////////
     // check for BlockA door1
-    if ( this.player.x > 496 && this.player.x < 540 && this.player.y > 1054 && this.player.y < 1074 ) {
+    if ( this.player.x > 509 && this.player.x < 529 && this.player.y > 1075.35 && this.player.y < 1092 ) {
         this.room1()
       }
     
@@ -247,10 +164,10 @@ class world extends Phaser.Scene {
           this.blockD()
         }
 
-    //check for BlockD entrance
-    if ( this.player.x > 1770 && this.player.x < 1806 && this.player.y > 400 && this.player.y < 417 && window.life<=0 ) {
-      this.gameOver()
-    }
+    // //check for gameOver entrance
+    // if ( this.player.x > 1770 && this.player.x < 1806 && this.player.y > 400 && this.player.y < 417 && window.life == 0 ) {
+    //   this.gameOver()
+    // }
 
 
     if (this.cursors.left.isDown) {
@@ -347,16 +264,6 @@ class world extends Phaser.Scene {
     this.scene.start("blockD", { playerPos: playerPos });
   }
 
-  //function to jump to blockD
-    gameComplete(player, tile) {
-      console.log("gameComplete function");
-      let playerPos = {};
-      playerPos.x = 1236;
-      playerPos.y = 207;
-      playerPos.dir = "up";
-  
-      this.scene.start("gameComplete");
-    }
 
    //function to jump to blockD
    gameOver(player, tile) {

@@ -22,12 +22,6 @@ class blockC extends Phaser.Scene {
     this.load.image("parcel","assets/parcel.png");
     this.load.image("parcel3","assets/parcel-03.png");
 
-    this.load.spritesheet('sas','assets/sas.png', {frameWidth:20, frameHeight:31})
-    this.load.image("friend","assets/friend.png", {frameWidth:23, frameHeight:32});
-    this.load.spritesheet('girlnpc','assets/girlnpc.png', {frameWidth:23, frameHeight:32});
-
-    this.load.image("mask","assets/mask.png");
-    this.load.image("board","assets/board.png");
     }
 
     create() {
