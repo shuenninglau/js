@@ -122,13 +122,13 @@ class cafeteria extends Phaser.Scene {
 
     //go back to worldmap, check for cafeteria exit
     if ( this.player.x > 1234 && this.player.y > 147.35 && this.player.y < 300.65  
-      && window.parcel1>=1 
-      && window.parcel2>=1 
-      && window.parcel3>=1 
-      && window.injection>=1) {
+) {
       this.gameComplete();
     }
-
+      // && window.parcel1>=1 
+      // && window.parcel2>=1 
+      // && window.parcel3>=1 
+      // && window.injection>=1
 
 
     if (this.cursors.left.isDown) {
