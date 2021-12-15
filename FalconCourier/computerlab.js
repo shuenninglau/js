@@ -22,10 +22,17 @@ class computerlab extends Phaser.Scene {
 
     this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");  
 
+    this.load.image("mask","assets/mask.png");
+    this.load.image("board","assets/board.png");
+    this.load.spritesheet('npcg','assets/npcg.png', {frameWidth:20, frameHeight:32});
+
     }
 
     create() {
         console.log('*** computerlab scene');
+
+        this.collect = this.sound.add("collect");
+        this.shake = this.sound.add("shake");
 
         let map = this.make.tilemap({key: "computerlabBA"});
 
@@ -85,20 +92,34 @@ class computerlab extends Phaser.Scene {
     this.physics.add.collider(this.player, this.furnitureLayer);
     this.physics.add.collider(this.player, this.frameLayer); 
     this.physics.add.collider(this.player, this.decorLayer);    
+    this.physics.add.collider(this.player, this.npcg);  
+    this.physics.add.collider(this.player, this.cafeteria);  
 
     this.physics.add.collider(this.player, this.itemLayer);
 
     this.physics.add.overlap(this.player,this.ene2,this.deductLife,null,this);
 
-    // this.parcel2 = this.physics.add.sprite(182,684.5, 'parcel2').setScale(0.3);
-    // window.chicken = this.parcel2
-
+    this.npcg = this.physics.add.sprite(450,358, 'npcg');
+    this.cafeteria = this.physics.add.sprite(596,644, 'cafeteria');
     this.physics.add.overlap(this.player,this.parcel2,this.collectParcel,null,this)  
     window.chicken = this.parcel2
-        
+
+    // scoreText /////////
+    this.board = this.add.sprite(100,50, "board").setScale(1.8).setScrollFactor(0);
+    this.mask = this.add.sprite(85,45, "mask").setScale(0.5).setScrollFactor(0);
+
+    scoreText = this.add.text(135, 40, '10', {
+      fontSize: '20px',
+      fill: '#ffffff'
+    });
+    scoreText.setScrollFactor(0);
+    // end of scoreText /////////
     }
 
     update() {
+    this.physics.moveToObject(this.ene2, this.player, 30, 5000)   
+    this.physics.moveToObject(this.cafeteria, this.player, 30, 10000) 
+    this.physics.moveToObject(this.npcg, this.player, 30, 15000) 
 
     //go back to blockA counter
     if ( this.player.x < 116
@@ -133,27 +154,29 @@ class computerlab extends Phaser.Scene {
 
   // Function of removeItem
   removeItem(player, tile) {
+    this.collect.play();
     console.log("remove item", tile.index);
     window.life=window.life+1
     console.log("life=", window.life)
     this.itemLayer.removeTileAt(tile.x, tile.y); // remove the item
+    scoreText.setText( window.life )
     return false;
   }
 
   // Function of deductLife
   deductLife(player, enemy) {
+    this.shake.play();
     console.log("deductLife");
     this.cameras.main.shake(500);
-    window.life=window.life-1
+    window.life=window.life-2
     console.log("life=", window.life)
     enemy.setVisible(false)
     enemy.body.setEnable(false)
+    scoreText.setText( window.life )
+    if(window.life == 0){console.log("you are dead")};
     return false;
   }
  
-
-
-
   // Function to jump to room1
   room1(player, tile) {
     console.log("room1 function");
@@ -163,8 +186,6 @@ class computerlab extends Phaser.Scene {
   playerPos.dir = "left";
 
   this.scene.start("room1", { playerPos: playerPos }); 
-  }
-
-    
+  }   
 
 }

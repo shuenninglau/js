@@ -7,16 +7,19 @@ class gameComplete extends Phaser.Scene {
 
   preload() {
     this.load.image("gameComplete","assets/gameComplete.png"); 
+    this.load.audio("gameComplete","assets/gameComplete.wav"); 
   }
 
   create() {
     console.log("*** preload scene");
 
+    this.gameComplete = this.sound.add("gameComplete");
+
     // Add any sound and music here
     // ( 0 = mute to 1 is loudest )
-    //this.music = this.sound.add('bgMusic').setVolume(0.3) // 10% volume
+    this.music = this.sound.add('gameComplete').setVolume(0.2) // 10% volume
 
-    //this.music.play()
+    this.music.play()
     //window.music = this.music
 
 

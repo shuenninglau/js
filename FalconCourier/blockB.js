@@ -20,13 +20,19 @@ class blockB extends Phaser.Scene {
     this.load.image("atlas","assets/atlas32x32.png");
     this.load.image("modern","assets/mordern32x32.png");
     this.load.image("parcel","assets/parcel.png");
-    // this.load.image("parcel2","assets/parcel-02.png");
 
-    this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");  
+    this.load.image("mask","assets/mask.png");
+    this.load.image("board","assets/board.png");
+
+    this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json"); 
+    this.load.spritesheet('guard','assets/guard.png', {frameWidth:23, frameHeight:32});
     }
 
     create() {
         console.log('*** blockB scene');
+
+        this.collect = this.sound.add("collect");
+        this.shake = this.sound.add("shake");
 
         let map = this.make.tilemap({key: "office"});
 
@@ -93,18 +99,25 @@ class blockB extends Phaser.Scene {
     
     this.physics.add.collider(this.player, this.itemLayer);
 
+    this.guard = this.physics.add.sprite(603,400, 'guard');
     this.physics.add.overlap(this.player,this.ene2,this.deductLife2,null,this);
+  
+    // scoreText /////////
+    this.board = this.add.sprite(100,50, "board").setScale(1.8).setScrollFactor(0);
+    this.mask = this.add.sprite(85,45, "mask").setScale(0.5).setScrollFactor(0);
 
-    // this.parcel2 = this.physics.add.sprite(182,684.5, 'parcel2').setScale(0.3);
-    // window.chicken = this.parcel2
-
-    // this.physics.add.overlap(this.player,this.parcel2,this.collectParcel,null,this)  
-    
-    // this.girlnpc = this.physics.add.sprite(500,332.5, 'girlnpc');
-    // this.physics.add.overlap(this.player,this.girlnpc,this.dropParcel,null,this) 
+    scoreText = this.add.text(135, 40, '10', {
+      fontSize: '20px',
+      fill: '#ffffff'
+    });
+    scoreText.setScrollFactor(0);
+    // end of scoreText /////////
     }
 
     update() {
+      this.physics.moveToObject(this.ene2, this.player, 30, 5000)
+      this.physics.moveToObject(this.guard, this.player, 30, 10000)
+
   ///////// Beginning of Exit room ////////////////////////////////
         // check for BlockB 
         if (this.player.x > 563 && this.player.x < 716 && this.player.y > 717) {
@@ -130,49 +143,31 @@ class blockB extends Phaser.Scene {
           this.player.body.setVelocity(0, 0);
         }
       } //////////// end of update /////////////////////////////////
-
-      
-      
+    
       // Function of removeItem
       removeItem(player, tile) {
+        this.collect.play();
         console.log("remove item", tile.index);
         window.life=window.life+1
         console.log("life=", window.life)
         this.itemLayer.removeTileAt(tile.x, tile.y); // remove the item
+        scoreText.setText(window.life )
         return false;
       }    
 
       // Function of deductLife
       deductLife2(player, enemy) {
+        this.shake.play();
         console.log("deductLife2");
         this.cameras.main.shake(500);
         window.life = window.life-2
         console.log("life=", window.life)
         enemy.setVisible(false)
         enemy.body.setEnable(false, false)
+        scoreText.setText(window.life )
+        if(window.life == 0){console.log("you are dead")};
         return false;
       }
-     
-      // // Function of collectParcel
-      // collectParcel(player, item) {
-      //   console.log("collectParcel");
-      //   window.parcel1 = window.parcel2 +1
-      //   console.log("parcel2", window.parcel2)
-      //   item.setVisible(false)
-      //   item.body.setEnable(false)
-      //   return false;
-      // }
-      
-      // // Function of dropParcel
-      // dropParcel(player, item) {
-      //   console.log("dropParcel");
-      //   if(window.parcel2 > 0){
-      //     this.parcel2.setVisible(true)
-      //     this.parcel2.x = item.x - 35
-      //     this.parcel2.y = item.y
-      //   }
-      //   return false;
-      // } 
 
       // Function /////////////////////////////
       world(player, tile) {

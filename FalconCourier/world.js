@@ -10,7 +10,7 @@ class world extends Phaser.Scene {
     
     this.playerPos = data.playerPos;
 
-  }
+  };
 
   preload() {
     // Step 1, load JSON
@@ -26,24 +26,29 @@ class world extends Phaser.Scene {
     this.load.image("parcel2","assets/parcel-02.png");
     this.load.image("parcel3","assets/parcel-03.png");
 
+    this.load.image("mask","assets/mask.png");
+    this.load.image("board","assets/board.png");
+
     this.load.spritesheet('girlnpc','assets/girlnpc.png', {frameWidth:23, frameHeight:32})
     this.load.spritesheet('guard','assets/guard.png', {frameWidth:23, frameHeight:32})
-    this.load.spritesheet('boynpc','assets/boynpc.png', {frameWidth:20, frameHeight:31})
-    this.load.spritesheet('library','assets/library.png', {frameWidth:23, frameHeight:32})
+    this.load.spritesheet('lecturer','assets/lecturer.png', {frameWidth:20, frameHeight:31})
+    this.load.spritesheet('cafeteria','assets/cafeteria.png', {frameWidth:20, frameHeight:32})
+    this.load.spritesheet('npcg','assets/npcg.png', {frameWidth:20, frameHeight:32})
+    this.load.spritesheet('sas','assets/sas.png', {frameWidth:20, frameHeight:31})
 
     this.load.atlas( 'left', 'assets/ch-left.png', 'assets/ch-left.json'); 
     this.load.atlas( 'right', 'assets/ch-right.png', 'assets/ch-right.json');
     this.load.atlas( 'up', 'assets/ch-up.png', 'assets/ch-up.json');
     this.load.atlas( 'down', 'assets/ch-down.png', 'assets/ch-down.json');
-
-    // this.load.atlas("ene3", "assets/ene3.png", "assets/ene3.json");   
-    // this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");   
+  
     this.load.atlas("ene1", "assets/ene1.png", "assets/ene1.json");  
 
   }
 
   create() {
     console.log("*** world scene");
+    this.collect = this.sound.add("collect");
+    this.shake = this.sound.add("shake");
 
     //Step 3 - Create the map from main
     let map = this.make.tilemap({key:'worldmap'}); 
@@ -140,7 +145,7 @@ class world extends Phaser.Scene {
     }) 
     /// end of ene1 animation////////////////////////////
   
-    //enable debug
+    //enable debug (track the player position)
     window.player = this.player.setScale(0.3);
 
     this.player.setCollideWorldBounds(true); // don't go out of the this.map 
@@ -155,23 +160,13 @@ class world extends Phaser.Scene {
         // between block c,d
         // behind block d
     this.ene1=this.physics.add.sprite( 230,798, 'ene1').play('ene1').setScale(0.3);// leftright
-    this.ene4=this.physics.add.sprite( 346,581, 'ene1').play('ene1').setScale(0.3);// updown
+    this.ene4=this.physics.add.sprite( 340,581, 'ene1').play('ene1').setScale(0.3);// updown
     this.ene5=this.physics.add.sprite( 460,227, 'ene1').play('ene1').setScale(0.3);// updown
     this.ene6=this.physics.add.sprite( 840,351, 'ene1').play('ene1').setScale(0.3);// leftright  
-    this.ene7=this.physics.add.sprite( 1233,144, 'ene1').play('ene1').setScale(0.3);// updown               
-    this.ene8=this.physics.add.sprite( 1166,461, 'ene1').play('ene1').setScale(0.3);// updown     
-    this.ene9=this.physics.add.sprite( 1676,591, 'ene1').play('ene1').setScale(0.3);// updown     
+    this.ene7=this.physics.add.sprite( 1230,144, 'ene1').play('ene1').setScale(0.3);// updown               
+    this.ene8=this.physics.add.sprite( 1160,461, 'ene1').play('ene1').setScale(0.3);// updown     
+    this.ene9=this.physics.add.sprite( 1670,591, 'ene1').play('ene1').setScale(0.3);// updown     
     this.ene10=this.physics.add.sprite( 1590,141, 'ene1').play('ene1').setScale(0.3);//leftright
-
-    // this.time.addEvent({
-    //   delay: 0,
-    //   callback: moveRightLeft,
-    //   callbackScope: this,
-    //   loop: false,
-    // });
-
-    // this.ene2=this.physics.add.sprite( 1590,141, 'ene2').setScale(0.3);
-    // this.ene3=this.physics.add.sprite( 1590,141, 'ene3').setScale(0.3);    
 
     // create the arrow keys
      this.cursors = this.input.keyboard.createCursorKeys();
@@ -184,9 +179,12 @@ class world extends Phaser.Scene {
     this.buildingLayer.setCollisionByExclusion(-1, true);
     this.itemLayer.setTileIndexCallback(575, this.removeItem, this);
 
-    this.physics.add.collider(this.player, this.decorLayer); 
-    this.physics.add.collider(this.player, this.buildingLayer);
+    // layer collisons
+    // this.physics.add.collider(this.player, this.decorLayer); 
+    // this.physics.add.collider(this.player, this.buildingLayer);
     this.physics.add.collider(this.player, this.itemLayer);
+    this.physics.add.collider(this.player, this.itemLayer);
+
 
     this.physics.add.overlap(this.player,this.ene1,this.deductLife,null,this)
     this.physics.add.overlap(this.player,this.ene4,this.deductLife,null,this)
@@ -197,40 +195,37 @@ class world extends Phaser.Scene {
     this.physics.add.overlap(this.player,this.ene9,this.deductLife,null,this)
     this.physics.add.overlap(this.player,this.ene10,this.deductLife,null,this)
 
-    // this.parcel1 = this.physics.add.sprite(647,941, 'parcel1').setScale(0.3);
-    // window.chicken = this.parcel1
-    this.physics.add.overlap(this.player,this.parcel1,this.collectParcel,null,this);  
-    window.chicken = this.parcel1
-
-    this.physics.add.overlap(this.player,this.parcel2,this.collectParcel,null,this);  
-    window.chicken = this.parcel2
-
-    this.physics.add.overlap(this.player,this.parcel3,this.collectParcel,null,this);  
-    window.chicken = this.parcel3
-
     // receipient position
-    this.guard = this.physics.add.sprite(579,761, 'guard');
-    this.girlnpc = this.physics.add.sprite(550,761, 'girlnpc');
-    this.boynpc = this.physics.add.sprite(1126.6,137.6, 'boynpc');
-    this.library = this.physics.add.sprite(1963.3,601, 'library');
+    this.guard = this.physics.add.sprite(571,829, 'guard');
+    this.girlnpc = this.physics.add.sprite(353,404, 'girlnpc');
+    this.lecturer = this.physics.add.sprite(1128,137, 'lecturer');
+    this.cafeteria = this.physics.add.sprite(1963,601, 'cafeteria');
+    this.npcg = this.physics.add.sprite(1908,424, 'npcg');
+    this.sas = this.physics.add.sprite(656,120, 'sas');
+  
+    // scoreText /////////
+    this.board = this.add.sprite(100,50, "board").setScale(1.8).setScrollFactor(0);
+    this.mask = this.add.sprite(85,45, "mask").setScale(0.5).setScrollFactor(0);
 
-    this.physics.add.overlap(this.player,this.girlnpc,this.dropParcel,null,this); 
-    this.physics.add.overlap(this.player,this.boynpc,this.dropParce2,null,this); 
-    this.physics.add.overlap(this.player,this.ibrary,this.dropParce3,null,this);     
-
-    // this.add.text(10,10, "Mask " + window.life + window.life-1 + window.life+1 , { font: '20px Open Sans', fill: '#ffffff' }).setScrollFactor(0);
-
-    // this.add.text(10,28, "Pink Parcel " + window.parcel1, { font: '20px Open Sans', fill: '#ffffff' }).setScrollFactor(0);
-
-    // this.add.text(10,46, "Blue Parcel " + window.parcel3, { font: '20px Open Sans', fill: '#ffffff' }).setScrollFactor(0);
-
-    // this.add.text(10,64, "Green Parcel " + window.parcel2, { font: '20px Open Sans', fill: '#ffffff' }).setScrollFactor(0);
-
-    // this.add.text(10,82, "injection " + window.injection, { font: '20px Open Sans', fill: '#ffffff' }).setScrollFactor(0);
-  } 
+    scoreText = this.add.text(135, 40, '10', {
+      fontSize: '20px',
+      fill: '#ffffff'
+    });
+    scoreText.setScrollFactor(0);
+    // end of scoreText /////////
+   } 
   /////////////////// end of create //////////////////////////////
 
-  update(time, delta) {
+  update() {
+    this.physics.moveToObject(this.ene1, this.player, 30, 10000)
+    this.physics.moveToObject(this.ene4, this.player, 30, 40000)
+    this.physics.moveToObject(this.ene5, this.player, 30, 70000)
+    this.physics.moveToObject(this.ene6, this.player, 30, 100000)
+    this.physics.moveToObject(this.ene7, this.player, 30, 130000)
+    this.physics.moveToObject(this.ene8, this.player, 30, 16000)
+    this.physics.moveToObject(this.ene9, this.player, 30, 19000)
+    this.physics.moveToObject(this.ene10, this.player, 30, 220000)
+
 ///////// Beginning of Enter room ////////////////////////////////
     // check for BlockA door1
     if ( this.player.x > 496 && this.player.x < 540 && this.player.y > 1054 && this.player.y < 1074 ) {
@@ -251,6 +246,12 @@ class world extends Phaser.Scene {
       if ( this.player.x > 1770 && this.player.x < 1806 && this.player.y > 400 && this.player.y < 417 ) {
           this.blockD()
         }
+
+    //check for BlockD entrance
+    if ( this.player.x > 1770 && this.player.x < 1806 && this.player.y > 400 && this.player.y < 417 && window.life<=0 ) {
+      this.gameOver()
+    }
+
 
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-200);
@@ -276,94 +277,28 @@ class world extends Phaser.Scene {
     }
   } /////////////////// end of update //////////////////////////////
 
-  delayOneSec() {
-    console.log("1 sec later...");
-    //this.player.body.setSize(this.player.width*1, this.player.height*1, true);
-    this.player.body.setSize(this.ene1.width * 1, this.ene1.height * 1);
-  }
-
-  overlap1() {
-    console.log("ene1");
-  }    
-
-  overlap6() {
-    console.log("ene1");
-  }    
-
-  overlap10() {
-    console.log("ene1");
-  }    
-
-  moveRightLeft() {
-    console.log("moveDownUp");
-    this.tweens.timeline({
-      targets: this.ene1,
-      loop: -1, // loop forever
-      ease: "Linear",
-      duration: 5000,
-      tweens: [
-        {
-          x: 500,
-        },
-        {
-          x: 230,
-        },
-      ],
-    });
-  }
-
-  moveRightLeft() {
-    console.log("moveDownUp");
-    this.tweens.timeline({
-      targets: this.ene6,
-      loop: -1, // loop forever
-      ease: "Linear",
-      duration: 5000,
-      tweens: [
-        {
-          x: 1000,
-        },
-        {
-          x: 840,
-        },
-      ],
-    });
-  }
-  moveRightLeft() {
-    console.log("moveDownUp");
-    this.tweens.timeline({
-      targets: this.ene10,
-      loop: -1, // loop forever
-      ease: "Linear",
-      duration: 5000,
-      tweens: [
-        {
-          x: 2000,
-        },
-        {
-          x: 1590,
-        },
-      ],
-    });
-  }
-  
   // Function of removeItem
   removeItem(player, tile) {
+    this.collect.play();
     console.log("remove item", tile.index);
     window.life = window.life+1
     console.log("life=", window.life)
     this.itemLayer.removeTileAt(tile.x, tile.y); // remove the item
+    scoreText.setText( window.life )
     return false;
   }
 
   // Function of deductLife
   deductLife(player, enemy) {
+    this.shake.play();
     console.log("deductLife");
     this.cameras.main.shake(500);
-    window.life = window.life-1
-    console.log("life=", window.life)
-    enemy.setVisible(false)
-    enemy.body.setEnable(false)
+    window.life = window.life-1;
+    console.log("life=", window.life);
+    enemy.setVisible(false);
+    enemy.body.setEnable(false);
+    scoreText.setText( window.life );
+    if(window.life == 0){console.log("you are dead")};
     return false;
   }
  
@@ -372,8 +307,8 @@ class world extends Phaser.Scene {
   room1(player, tile) {
     console.log("room1 function");
     let playerPos = {};
-    playerPos.x = 643;
-    playerPos.y = 1084;
+    playerPos.x = 642;
+    playerPos.y = 1076;
     playerPos.dir = "up";
 
     this.scene.start("room1", { playerPos: playerPos });
@@ -412,7 +347,7 @@ class world extends Phaser.Scene {
     this.scene.start("blockD", { playerPos: playerPos });
   }
 
-    //function to jump to blockD
+  //function to jump to blockD
     gameComplete(player, tile) {
       console.log("gameComplete function");
       let playerPos = {};
@@ -422,6 +357,16 @@ class world extends Phaser.Scene {
   
       this.scene.start("gameComplete");
     }
+
+   //function to jump to blockD
+   gameOver(player, tile) {
+    console.log("gameComplete function");
+    let playerPos = {};
+
+    playerPos.dir = "up";
+
+    this.scene.start("gameOver");
+  }   
 /////// End of Enter room position //////////////////////////////////////////////////////
 
 }

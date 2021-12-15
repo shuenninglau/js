@@ -21,13 +21,22 @@ class blockC extends Phaser.Scene {
     this.load.image("modern","assets/mordern32x32.png");
     this.load.image("parcel","assets/parcel.png");
     this.load.image("parcel3","assets/parcel-03.png");
+
+    this.load.spritesheet('sas','assets/sas.png', {frameWidth:20, frameHeight:31})
     this.load.image("friend","assets/friend.png", {frameWidth:23, frameHeight:32});
-    
-    this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");  
+    this.load.spritesheet('girlnpc','assets/girlnpc.png', {frameWidth:23, frameHeight:32});
+
+    this.load.image("mask","assets/mask.png");
+    this.load.image("board","assets/board.png");
     }
 
     create() {
         console.log('*** blockC scene');
+
+        this.collect = this.sound.add("collect");
+        this.shake = this.sound.add("shake");
+        this.taskCollect = this.sound.add("taskCollect");
+        this.drop = this.sound.add("drop");
 
         let map = this.make.tilemap({key: "jewelry"});
 
@@ -42,22 +51,7 @@ class blockC extends Phaser.Scene {
         this.furnitureLayer = map.createLayer("furnitureLayer",tilesArray, 0, 0);
         this.decorLayer = map.createLayer("decorLayer",tilesArray, 0, 0);
         this.itemLayer = map.createLayer("itemLayer",tilesArray, 0, 0);
-        this.frameLayer = map.createLayer("frameLayer",tilesArray, 0, 0);
-    
-        /// ene2 animation////////////////////////////
-     this.anims.create({
-      key: 'ene2',
-      frames: [
-        { key: 'ene2', frame: 'ene2-01'},
-        { key: 'ene2', frame: 'ene2-02'},
-        { key: 'ene2', frame: 'ene2-03'},
-        { key: 'ene2', frame: 'ene2-04'},
-
-      ],
-      frameRate: 3,
-      repeat: -1
-    }) 
-    /// end of ene2 animation////////////////////////////      
+        this.frameLayer = map.createLayer("frameLayer",tilesArray, 0, 0);     
 
     this.physics.world.bounds.width = this.bgLayer.width;   
     this.physics.world.bounds.height = this.bgLayer.height;                                                                                    
@@ -66,8 +60,6 @@ class blockC extends Phaser.Scene {
 
     //enable debug
     window.player = this.player;
-
-    this.ene2=this.physics.add.sprite( 331,461, 'ene2').play('ene2').setScale(0.3);
 
     this.player.setCollideWorldBounds(true); // don't go out of the this.map 
 
@@ -93,12 +85,28 @@ class blockC extends Phaser.Scene {
     this.parcel3 = this.physics.add.sprite(1082,1063, 'parcel3').setScale(0.3);
     window.chicken = this.parcel3
     this.physics.add.overlap(this.player,this.parcel3,this.collectParcel,null,this);  
-    
+
+    this.sas = this.physics.add.sprite(212,969, 'sas');
+    this.guard = this.physics.add.sprite(949,782, 'guard');
     this.friend = this.physics.add.sprite(289,392, 'friend');
     this.physics.add.overlap(this.player,this.friend,this.dropParcel,null,this); 
+
+    // scoreText /////////
+    this.board = this.add.sprite(100,50, "board").setScale(1.8).setScrollFactor(0);
+    this.mask = this.add.sprite(85,45, "mask").setScale(0.5).setScrollFactor(0);
+
+    scoreText = this.add.text(135, 40, '10', {
+      fontSize: '20px',
+      fill: '#ffffff'
+    });
+    scoreText.setScrollFactor(0);
+    // end of scoreText /////////  
     }
 
     update() {
+      this.physics.moveToObject(this.guard, this.player, 30, 10000)    
+      this.physics.moveToObject(this.sas, this.player, 50, 40000)  
+
     //go back to worldmap, check for blockC exit
     if ( this.player.x > 563.35 && this.player.x < 716.5 && this.player.y > 1165.3) {
             this.world();
@@ -130,45 +138,38 @@ class blockC extends Phaser.Scene {
 
   // Function of removeItem
   removeItem(player, tile) {
+    this.collect.play();
+    this.collect.play();
     console.log("remove item", tile.index);
     window.life=window.life+1
     console.log("life=", window.life)
     this.itemLayer.removeTileAt(tile.x, tile.y); // remove the item
+    scoreText.setText(window.life )
     return false;
   }
 
-  // Function of deductLife
-  deductLife(player, enemy) {
-    console.log("deductLife");
-    this.cameras.main.shake(500);
-    window.life=window.life-1
-    console.log("life=", window.life)
-    enemy.setVisible(false)
-    enemy.body.setEnable(false)
+  // Function of collectParcel
+  collectParcel(player, item) {
+    this.taskCollect.play();
+    console.log("collectParce3");
+    window.parcel3 = window.parcel3 +1
+    console.log("parcel3", window.parcel3)
+    item.setVisible(false)
+    item.body.setEnable(false)
     return false;
-  }
-      // Function of collectParcel
-      collectParcel(player, item) {
-        console.log("collectParce3");
-        window.parcel3 = window.parcel3 +1
-        console.log("parcel3", window.parcel3)
-        item.setVisible(false)
-        item.body.setEnable(false)
-        return false;
-      }
+    }
       
-      // Function of dropParcel
-      dropParcel(player, item) {
-        console.log("dropParcel");
-        if(window.parcel3 > 0){
-          this.parcel3.setVisible(true)
-          this.parcel3.x = item.x - 35
-          this.parcel3.y = item.y
-        }
-        return false;
-      } 
-
-  
+  // Function of dropParcel
+  dropParcel(player, item) {
+    this.drop.play();
+    console.log("dropParcel");
+    if(window.parcel3 > 0){
+    this.parcel3.setVisible(true)
+    this.parcel3.x = item.x - 35
+    this.parcel3.y = item.y
+    }
+    return false;
+    } 
 
     // Exit room ///////////////////////////////
     // Function to jump to word

@@ -11,6 +11,7 @@ class gameDirection extends Phaser.Scene {
     this.load.atlas("down", "assets/ch-down.png", "assets/ch-down.json");
     this.load.atlas("left", "assets/ch-left.png", "assets/ch-left.json");
     this.load.atlas("right", "assets/ch-right.png", "assets/ch-right.json");  
+    this.load.atlas("emotion", "assets/emotion.png", "assets/emotion.json");  
   }
 
   create() {
@@ -83,6 +84,17 @@ class gameDirection extends Phaser.Scene {
     this.down = this.add.sprite(208,390,'ch-down').play('down').setScale(0.8);
     this.left = this.add.sprite(290,390,'ch-left').play('left').setScale(0.8);
     this.right = this.add.sprite(380,390,'ch-right').play('right').setScale(0.8);
+
+    this.anims.create({
+      key: 'emotion',
+      frames: [
+        { key: 'emotion', frame: 'emotion-01'},
+        { key: 'emotion', frame: 'emotion-02'},
+      ],
+      frameRate: 3,
+      repeat: -1
+    })
+    this.emotion = this.add.sprite(600,360,'emotion').play('emotion').setScale(0.5);
 
     // On spacebar event, call the world scene
     spaceDown.on(

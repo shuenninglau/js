@@ -23,12 +23,25 @@ class blockD extends Phaser.Scene {
     this.load.image("parcel","assets/parcel.png");
     this.load.image("injection","assets/injection.png");
 
+    this.load.spritesheet('sas','assets/sas.png', {frameWidth:20, frameHeight:31})
+    this.load.spritesheet('npcg','assets/npcg.png', {frameWidth:20, frameHeight:32})
+    this.load.spritesheet('npcg','assets/npcg.png', {frameWidth:20, frameHeight:32})
+
+
     this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");  
+
+    this.load.image("mask","assets/mask.png");
+    this.load.image("board","assets/board.png");
 
     }
 
     create() {
         console.log('*** blockD scene');
+
+        this.taskCollect = this.sound.add("taskCollect");
+
+        this.collect = this.sound.add("collect");
+        this.shake = this.sound.add("shake");
 
         let map = this.make.tilemap({key: "bDclassroom"});
 
@@ -94,28 +107,42 @@ class blockD extends Phaser.Scene {
 
     this.physics.add.overlap(this.player,this.ene2,this.deductLife,null,this);
 
-    // this.parcel2 = this.physics.add.sprite(182,684.5, 'parcel2').setScale(0.3);
-    // window.chicken = this.parcel2
-
     this.physics.add.overlap(this.player,this.parcel2,this.collectParcel,null,this)  
     window.chicken = this.parcel2
-  
+
+    this.npcg = this.physics.add.sprite(230,246, 'npcg');
+    this.sas = this.physics.add.sprite(123,733, 'sas');
+    this.girlnpc = this.physics.add.sprite(970,365, 'girlnpc');
+
     this.injection = this.physics.add.sprite(985.4,542.6, 'injection').setScale(0.3);
     window.injection = this.injection
-    this.physics.add.overlap(this.player,this.injection,this.collectInjection,null,this);        
+    this.physics.add.overlap(this.player,this.injection,this.collectInjection,null,this); 
+
+    // scoreText /////////
+    this.board = this.add.sprite(100,50, "board").setScale(1.8).setScrollFactor(0);
+    this.mask = this.add.sprite(85,45, "mask").setScale(0.5).setScrollFactor(0);
+
+    scoreText = this.add.text(135, 40, '10', {
+      fontSize: '20px',
+      fill: '#ffffff'
+    });
+    scoreText.setScrollFactor(0);
+    // end of scoreText /////////          
     }
 
     update() {
+    this.physics.moveToObject(this.ene2, this.player, 30, 5000)
+    this.physics.moveToObject(this.npcg, this.player, 30, 10000)
+    this.physics.moveToObject(this.sas, this.player, 30, 50000)
+    this.physics.moveToObject(this.girlnpc, this.player, 30, 100000)
 
     //go back to worldmap, check for blockB exit
-    if ( this.player.x < 55
-        && this.player.y > 493 && this.player.y < 590 ) {
+    if ( this.player.x < 55 && this.player.y > 493 && this.player.y < 590 ) {
             this.world();
         }
 
     //entrance for cafeteria
-    if ( this.player.x > 1220
-        && this.player.y > 496 && this.player.y < 591 ) {
+    if ( this.player.x > 1220 && this.player.y > 496 && this.player.y < 591 ) {
   
           this.cafeteria();
         }
@@ -146,25 +173,32 @@ class blockD extends Phaser.Scene {
 
   // Function of removeItem
   removeItem(player, tile) {
+    this.collect.play();
     console.log("remove item", tile.index);
     window.life=window.life+1
     console.log("life=", window.life)
     this.itemLayer.removeTileAt(tile.x, tile.y); // remove the item
+    scoreText.setText( window.life )
     return false;
   }
 
   // Function of deductLife
   deductLife(player, enemy) {
+    this.shake.play();
     console.log("deductLife");
     this.cameras.main.shake(500);
-    window.life=window.life-1
+    window.life=window.life-2
     console.log("life=", window.life)
     enemy.setVisible(false)
     enemy.body.setEnable(false)
+    scoreText.setText(window.life )
+    if(window.life == 0){console.log("you are dead")};
     return false;
   }
+
   // Function of collectParcel
   collectInjection(player, item) {
+    this.taskCollect.play();
     console.log("collectInjection");
     window.injection = window.injection +1
     console.log("injection", window.injection)
@@ -173,14 +207,13 @@ class blockD extends Phaser.Scene {
     return false;
     }
       
-
     // Function to jump to room1
     world(player, tile) {
     console.log("world function");
     let playerPos = {};
     playerPos.x = 1770;
     playerPos.y = 407;
-    playerPos.dir = "Down";
+    playerPos.dir = "down";
     this.scene.start("world", { playerPos: playerPos });
   }
 

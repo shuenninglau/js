@@ -13,16 +13,25 @@ class preload extends Phaser.Scene {
     this.load.atlas("ene3", "assets/ene3.png", "assets/ene3.json");   
     this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");   
     this.load.atlas("ene1", "assets/ene1.png", "assets/ene1.json");   
+
+    this.load.audio("collect","assets/collect.wav");  
+    this.load.audio("drop","assets/drop.wav"); 
+    this.load.audio("gameComplete","assets/gameComplete.wav"); 
+    this.load.audio("gameOver","assets/gameOver.wav");  
+    this.load.audio("taskCollect","assets/taskCollect.mp3");  
+    this.load.audio("shake","assets/shake.mp3");  
+    this.load.audio("bg","assets/bg.mp3");  
+       
   }
 
   create() {
     console.log("*** preload scene");
 
-    // Add any sound and music here
+    // Add any sound and music 
     // ( 0 = mute to 1 is loudest )
-    //this.music = this.sound.add('bgMusic').setVolume(0.3) // 10% volume
+    this.music = this.sound.add('bg', {loop: true}).setVolume(0.2) // 10% volume
 
-    //this.music.play()
+    this.music.play()
     //window.music = this.music
 
 
@@ -105,33 +114,15 @@ class preload extends Phaser.Scene {
   this.ene1 = this.add.sprite(205,530,'ene1').play('ene1').setScale(0.8);
 
     // On spacebar event, call the world scene
-    spaceDown.on(
-      "down",
+    spaceDown.on(      "down",
       function () {
         console.log("Jump to storyTextbox");
-
         this.scene.start(
-          "storyTextbox",
-          // Optional parameters
-          {}
-        );
-      },
-      this
-    );
-  
+          "storyTextbox",{});
+      }, this );
+ 
+    function update() {}
     /////////////////// Tween function/////////////////////////////
-    function update(time, delta) {}
-
-    function delayOneSec() {
-      console.log("1 sec later...");
-      //this.player.body.setSize(this.player.width*1, this.player.height*1, true);
-      this.player.body.setSize(this.player.width * 1, this.player.height * 1);
-    }
-
-    function overlap1() {
-      console.log("ene1");
-    }    
-
     function moveRightLeft() {
       console.log("moveDownUp");
       this.tweens.timeline({
@@ -141,7 +132,7 @@ class preload extends Phaser.Scene {
         duration: 5000,
         tweens: [
           {
-            x: 700,
+            x: 600,
           },
           {
             x: 205,
@@ -157,7 +148,7 @@ class preload extends Phaser.Scene {
       fill: "#000000",
     });
 
-    // Create all the game animations here
+  
   }  
 
 }

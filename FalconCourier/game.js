@@ -16,11 +16,12 @@
     },
     backgroundColor: '#000000',
     pixelArt: true,
-    scene: [preload, storyTextbox, gameTask, gameDirection, world, room1, blockB, blockC, blockD, cafeteria, computerlab, library, gameComplete]
+    scene: [preload, storyTextbox, gameTask, gameDirection, world, room1, blockB, blockC, blockD, cafeteria, computerlab, gameComplete, gameOver]
 };
 
-
 var game = new Phaser.Game(config);
+var scoreText;
+
 window.life=10
 window.parcel1=0
 window.parcel2=0

@@ -21,13 +21,22 @@ class cafeteria extends Phaser.Scene {
     this.load.image("interior","assets/interior32x32.png")
     this.load.image("modern","assets/mordern32x32.png");
     this.load.image("parcel","assets/parcel.png");
-    this.load.spritesheet('boynpc','assets/boynpc.png', {frameWidth:20, frameHeight:31})
+    this.load.spritesheet('boynpc','assets/boynpc.png', {frameWidth:20, frameHeight:31});
+
     this.load.atlas("ene3", "assets/ene3.png", "assets/ene3.json");  
+
+    this.load.image("mask","assets/mask.png");
+    this.load.image("board","assets/board.png");
 
     }
 
     create() {
         console.log('*** cafeteria scene');
+
+        this.collect = this.sound.add("collect");
+        this.shake = this.sound.add("shake");
+        this.taskCollect = this.sound.add("taskCollect");
+        this.drop = this.sound.add("drop");
 
         let map = this.make.tilemap({key: "cafeteriatile"});
 
@@ -65,7 +74,7 @@ class cafeteria extends Phaser.Scene {
     //enable debug
     window.player = this.player;
 
-    this.ene3=this.physics.add.sprite( 290,248.5, 'ene3').play('ene3').setScale(0.3);
+    this.ene3=this.physics.add.sprite( 1089,221, 'ene3').play('ene3').setScale(0.8);
 
     this.player.setCollideWorldBounds(true); // don't go out of the this.map 
 
@@ -96,29 +105,46 @@ class cafeteria extends Phaser.Scene {
 
     this.physics.add.overlap(this.player,this.parcel2,this.collectParcel,null,this)  
 
-    this.boynpc = this.physics.add.sprite(944.8,113.35, 'boynpc');
+    this.guard = this.physics.add.sprite(303,300, 'guard');
+    this.boynpc = this.physics.add.sprite(945,150, 'boynpc');
     this.physics.add.overlap(this.player,this.boynpc,this.dropParcel,null,this);  
 
     var endPoint = map.findObject(
       "objectLayer1",
       (obj) => obj.name === "endPoint"
     );
-        
+
+    // scoreText /////////
+    this.board = this.add.sprite(100,50, "board").setScale(1.8).setScrollFactor(0);
+    this.mask = this.add.sprite(85,45, "mask").setScale(0.5).setScrollFactor(0);
+
+    scoreText = this.add.text(135, 40, '10', {
+      fontSize: '20px',
+      fill: '#ffffff'
+    });
+    scoreText.setScrollFactor(0);
+    // end of scoreText /////////  
     }
 
     update() {
-
+    this.physics.moveToObject(this.ene3, this.player, 30, 5000)
+    this.physics.moveToObject(this.guard, this.player, 30, 10000)
+    
+      
     //go back to blockD classroom
-    if ( this.player.x < 59.3 && this.player.y > 493 && this.player.y < 590 ) {
+    if ( this.player.x < 56.3 && this.player.y > 211.35 && this.player.y < 300.5 ) {
           this.blockD();
         }
 
     //go back to worldmap, check for cafeteria exit
     if ( this.player.x > 1234 && this.player.y > 147.35 && this.player.y < 300.65 ) {
-            this.gameComplete();
-        }
+      this.gameComplete();
+    }
 
-    
+    // && window.parcel1>=1 
+    // && window.parcel2>=1 
+    // && window.parcel3>=1 
+    // && window.injection>=1
 
     if (this.cursors.left.isDown) {
         this.player.body.setVelocityX(-200);
@@ -146,56 +172,64 @@ class cafeteria extends Phaser.Scene {
 
   // Function of removeItem
   removeItem(player, tile) {
+    this.collect.play();
     console.log("remove item", tile.index);
     window.life=window.life+1
     console.log("life=", window.life)
     this.itemLayer.removeTileAt(tile.x, tile.y); // remove the item
+    scoreText.setText( window.life )
     return false;
   }
 
   // Function of deductLife
   deductLife(player, enemy) {
+    this.shake.play();
     console.log("deductLife");
     this.cameras.main.shake(500);
-    window.life=window.life-1
+    window.life=window.life-3
     console.log("life=", window.life)
     enemy.setVisible(false)
     enemy.body.setEnable(false)
+    scoreText.setText( window.life )
+    if(window.life == 0){console.log("you are dead")};
     return false;
   }
-      // Function of collectParcel
-      collectParcel(player, item) {
-        console.log("collectParcel");
-        window.parcel2 = window.parcel2 +1
-        console.log("parcel2", window.parcel2)
-        item.setVisible(false)
-        item.body.setEnable(false)
-        return false;
-      }
+     
+  // Function of collectParcel
+  collectParcel(player, item) {
+    this.taskCollect.play();
+    console.log("collectParcel");
+    window.parcel2 = window.parcel2 +1
+    console.log("parcel2", window.parcel2)
+    item.setVisible(false)
+    item.body.setEnable(false)
+    return false;
+    }
       
-      // Function of dropParcel
-      dropParcel(player, item) {
-        console.log("dropParcel");
-        if(window.parcel2 > 0){
-          this.parcel2.setVisible(true)
-          this.parcel2.x = item.x - 35
-          this.parcel2.y = item.y
-        }
-        return false;
-      } 
- 
-//     // Function to jump to room1
-//     world(player, tile) {
-//     console.log("world function");
-//     let playerPos = {};
-//     playerPos.x = 1770;
-//     playerPos.y = 407;
-//     playerPos.dir = "Down";
+  // Function of dropParcel
+  dropParcel(player, item) {
+    this.drop.play();
+    console.log("dropParcel");
+    if(window.parcel2 > 0){
+    this.parcel2.setVisible(true)
+    this.parcel2.x = item.x - 35
+    this.parcel2.y = item.y
+    }
+    return false;
+    } 
 
-//     this.scene.start("world", { playerPos: playerPos });
-//   }
+  // Function to jump to blockD
+  room1(player, tile) {
+    console.log("blockD function");
+  let playerPos = {};
+  playerPos.x = 1090;
+  playerPos.y = 448;
+  playerPos.dir = "left";
 
-    // Function to jump to room1
+  this.scene.start("blockD", { playerPos: playerPos }); 
+  }
+  
+    // Function to jump to gameComplete
     gameComplete(player, tile) {
     console.log("gameComplete function");
     let playerPos = {};
@@ -205,12 +239,5 @@ class cafeteria extends Phaser.Scene {
 
     this.scene.start("gameComplete", { playerPos: playerPos });
   }
-
-    // // Function to gameComplete
-    // function() {
-    //     console.log("Jump to storyTextbox");
-    //     this.scene.start("gameComplete");
-    //   }
-    //   this  
 
 }

@@ -21,15 +21,27 @@ class room1 extends Phaser.Scene {
     this.load.image("modern","assets/mordern32x32.png");
     this.load.image("parcel","assets/parcel.png");
 
-    // this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");  
+    this.load.atlas("ene2", "assets/ene2.png", "assets/ene2.json");  
     this.load.image("parcel1","assets/parcel-01.png");
-    this.load.spritesheet('library','assets/library.png', {frameWidth:23, frameHeight:32})
+
+    this.load.spritesheet('library','assets/library.png', {frameWidth:23, frameHeight:32});
+    this.load.spritesheet('lecturer','assets/lecturer.png', {frameWidth:20, frameHeight:31});
+    this.load.spritesheet('guard','assets/guard.png', {frameWidth:23, frameHeight:32});
+
+
+    this.load.image("mask","assets/mask.png");
+    this.load.image("board","assets/board.png");
    
     }
 
     create() {
         console.log('*** room1 scene');
 
+        this.collect = this.sound.add("collect");
+        this.shake = this.sound.add("shake");
+        this.taskCollect = this.sound.add("taskCollect");
+        this.drop = this.sound.add("drop");
+        
         let map = this.make.tilemap({key: "BAr1"});
 
         let atlasTiles = map.addTilesetImage("atlas32x32","atlas");
@@ -52,21 +64,7 @@ class room1 extends Phaser.Scene {
 
     //enable debug
     window.player = this.player.setScale(0.3);
-
-    // this.anims.create({
-    //   key: 'ene2',
-    //   frames: [
-    //     { key: 'ene2', frame: 'ene2-01'},
-    //     { key: 'ene2', frame: 'ene2-02'},
-    //     { key: 'ene2', frame: 'ene2-03'},
-    //     { key: 'ene2', frame: 'ene2-04'},
-    //   ],
-    //   frameRate: 2.5,
-    //   repeat: -1
-    // })
-    // this.ene2 = this.add.sprite(464.5,947.3,'ene2').play('ene2').setScale(0.3);
     
-  
     this.player.setCollideWorldBounds(true); // don't go out of the this.map 
 
     // // create the arrow keys
@@ -89,33 +87,36 @@ class room1 extends Phaser.Scene {
 
     this.physics.add.overlap(this.player,this.ene2,this.deductLife,null,this);
 
-    this.parcel1 = this.physics.add.sprite(647,941, 'parcel1').setScale(0.3);
+    this.parcel1 = this.physics.add.sprite(1068,863, 'parcel1').setScale(0.3);
     window.chicken = this.parcel1
     this.physics.add.overlap(this.player,this.parcel1,this.collectParcel,null,this);  
-    
+
+    this.guard = this.physics.add.sprite(603,800, 'guard');
+    this.lecturer = this.physics.add.sprite(642,673, 'lecturer');
     this.library = this.physics.add.sprite(211.35,371.35, 'library');
     this.physics.add.overlap(this.player,this.library,this.dropParcel,null,this);  
+
+    // scoreText /////////
+    this.board = this.add.sprite(100,50, "board").setScale(1.8).setScrollFactor(0);
+    this.mask = this.add.sprite(85,45, "mask").setScale(0.5).setScrollFactor(0);
+
+    scoreText = this.add.text(135, 40, '10', {
+      fontSize: '20px',
+      fill: '#ffffff'
+    });
+    scoreText.setScrollFactor(0);
+    // end of scoreText /////////
     }
 
-    update(time, delta) {
-    // this.time.addEvent({
-    //   delay: 3000,
-    //   callback: moveRightLeft,
-    //   callbackScope: this,
-    //   loop: false,
-    // });
-
+    update() {
+      this.physics.moveToObject(this.lecturer, this.player, 30, 30000)
+      this.physics.moveToObject(this.guard, this.player, 30, 80000)
       ///////// Beginning of Enter room ////////////////////////////////
         // check for BlockA 
         if (this.player.x > 589 && this.player.x < 696 && this.player.y > 1164) {
           this.world();
         }
     
-        // goto library
-        if (this.player.x < 110 && this.player.y > 787.35 && this.player.y < 876.5) {
-          this.library();
-        }
-
         // goto computer lab
         if (this.player.x > 1170 && this.player.y > 409 && this.player.y < 500) {
           this.complab();
@@ -143,41 +144,49 @@ class room1 extends Phaser.Scene {
     
       // Function of removeItem
       removeItem(player, tile) {
+        this.collect.play();
         console.log("remove item", tile.index);
         window.life=window.life+1
         console.log("life=", window.life)
         this.itemLayer.removeTileAt(tile.x, tile.y); // remove the item
+        scoreText.setText( window.life )
+        if(window.life == 0){console.log("you are dead")};
         return false;
       }    
 
       // Function of deductLife
       deductLife(player, enemy) {
+        this.shake.play();
         console.log("deductLife");
         this.cameras.main.shake(500);
-        window.life=window.life-1
-        console.log("life=", window.life)
-        enemy.setVisible(false)
-        enemy.body.setEnable(false)
+        window.life=window.life-2;
+        console.log("life=", window.life);
+        enemy.setVisible(false);
+        enemy.body.setEnable(false);
+        scoreText.setText( window.life );
+  
         return false;
       }
      
       // Function of collectParcel
       collectParcel(player, item) {
+        this.taskCollect.play();
         console.log("collectParcel");
-        window.parcel1 = window.parcel1 +1
-        console.log("parcel1", window.parcel1)
-        item.setVisible(false)
-        item.body.setEnable(false)
+        window.parcel1 = window.parcel1 +1;
+        console.log("parcel1", window.parcel1);
+        item.setVisible(false);
+        item.body.setEnable(false);
         return false;
       }
       
       // Function of dropParcel
       dropParcel(player, item) {
+        this.drop.play();
         console.log("dropParcel");
         if(window.parcel1 > 0){
-          this.parcel1.setVisible(true)
-          this.parcel1.x = item.x - 35
-          this.parcel1.y = item.y
+          this.parcel1.setVisible(true);
+          this.parcel1.x = item.x - 35;
+          this.parcel1.y = item.y;
         }
         return false;
       } 
@@ -187,22 +196,13 @@ class room1 extends Phaser.Scene {
       world(player, tile) {
         console.log("world function");
         let playerPos = {};
-        playerPos.x = 513;
-        playerPos.y = 1097;
+        playerPos.x = 519;
+        playerPos.y = 1075.35;
         playerPos.dir = "down";
-    
+
         this.scene.start("world", { playerPos: playerPos });
       }
-    
-      library(player, tile) {
-        console.log("library function");
-        let playerPos = {};
-        playerPos.x = 1100;
-        playerPos.y = 440;
-        playerPos.dir = "right";
-    
-        this.scene.start("library", { playerPos: playerPos });
-      }
+ 
       ////// Exit from computer lab /////////////////////////////////////////////
       complab(player, tile) {
         console.log("complab function");
@@ -215,34 +215,5 @@ class room1 extends Phaser.Scene {
       }
 /////// End of Exit room //////////////////////////////////////////////////////
 
-   /////////////////// Tween function/////////////////////////////
-  delayOneSec() {
-     console.log("1 sec later...");
-     //this.player.body.setSize(this.player.width*1, this.player.height*1, true);
-     this.player.body.setSize(this.player.width * 1, this.player.height * 1);
-   }
-
-   overlap1() {
-     console.log("ene2");
-   }    
-
-   moveRightLeft() {
-     console.log("moveDownUp");
-     this.tweens.timeline({
-       targets: this.ene2,
-       loop: -1, // loop forever
-       ease: "Linear",
-       duration: 5000,
-       tweens: [
-         {
-           x: 700,
-         },
-         {
-           x: 100,
-         },
-       ],
-     });
-   }
-   ////////////////////// end of tween function////////////////////////
 
 }
