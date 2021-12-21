@@ -7,7 +7,7 @@
         default: 'arcade',
         arcade: {
             gravity: false,
-            debug: true, //这个最后最后的时候要关掉，所以那个红色的格子会没有掉
+            debug: false, //这个最后最后的时候要关掉，所以那个红色的格子会没有掉
         }
     },
     scale: { //这个是responsive跟着你的screen的大小，会自动scale
