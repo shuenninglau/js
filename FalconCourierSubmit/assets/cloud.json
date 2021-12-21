@@ -1,0 +1,65 @@
+{
+  "frames": [
+    {
+      "filename": "cloud-02",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 836,
+        "h": 362
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 1,
+        "w": 836,
+        "h": 362
+      },
+      "sourceSize": {
+        "w": 838,
+        "h": 426
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "cloud-01",
+      "frame": {
+        "x": 836,
+        "y": 0,
+        "w": 813,
+        "h": 361
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 0,
+        "w": 813,
+        "h": 361
+      },
+      "sourceSize": {
+        "w": 837,
+        "h": 426
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ],
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "cloud.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1649,
+      "h": 362
+    },
+    "scale": 1
+  }
+}
